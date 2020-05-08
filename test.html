@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css" />
+
+<style>
+
+	.body-content {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	
+	div.dataTables_length {
+	  margin-right: 18em;
+	}
+
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+	
+	.overlay{
+		opacity: 0.8;
+		background-color: #fff;
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 999999;
+	}
+	
+	.center, .centerWithText {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+	}
+	
+	.centerWithText {
+		flex-direction: column;
+	}
+	
+	
+	.centerWithText {
+		flex-direction: column;
+	}
+	
+	.centerWithText > img {
+		width: 100px;
+		height: 100px;
+	}
+	
+	.glyphicon.glyphicon-saved {
+		font-size: 50px;
+		color: green;
+	}
+</style>
+</head>
+
+<body class="body-content">
+
+<div class="overlay centerWithText" id="divSuccessMessage">
+		<div class="alert alert-success">
+			<span class="glyphicon glyphicon-saved"></span><h3><strong>Success!</strong> Processing completed.</h3>
+		</div>
+	</div>
+</body>
+</html>

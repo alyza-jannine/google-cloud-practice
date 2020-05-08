@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css" />
+
+<style>
+
+	.body-content {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	
+	div.dataTables_length {
+	  margin-right: 18em;
+	}
+
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+	
+	.overlay{
+		opacity: 0.8;
+		background-color: #fff;
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 999999;
+	}
+	
+	.center, .centerWithText {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+	}
+	
+	.centerWithText {
+		flex-direction: column;
+	}
+	
+	
+	.centerWithText {
+		flex-direction: column;
+	}
+	
+	.centerWithText > img {
+		width: 100px;
+		height: 100px;
+	}
+	
+	.glyphicon.glyphicon-saved {
+		font-size: 50px;
+		color: green;
+	}
+</style>
+</head>
+
+<body class="body-content">
+	<div class="row">
+		<div class="overlay centerWithText" id="divLoading">
+			<img src="https://storage.googleapis.com/alyza_jannine/loading-icon.gif" alt="" class="center" />
+			<h3>&nbsp;&nbsp;Processing request...</h3>
+		</div>
+		
+		<div class="overlay centerWithText" id="divSuccessMessage" style="display: none;">
+			<div class="alert alert-success">
+				<span class="glyphicon glyphicon-saved"></span><h3><strong>Success!</strong> Processing completed.</h3>
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-12">
+	
+        <h2>Records</h2>
+        <br />
+		<div class="center">
+			<button type="button" class="btn btn-primary" id="btnAddRecord" data-toggle="modal" data-target="#addRecordModal" style="margin-right: 10px;">Add Record</button>
+			<button type="button" class="btn btn-danger" id="btnDeleteRecord">Delete Record(s)</button>
+		</div>
+		
+		<br />
+		<p id="deleteMessage" style="color: red; font-weight: bold; display: none;">Deleting record(s) ...</p>
+    </div>
+
+    <div class="col-md-12" id="divTable" style="display: none;">
+		<br />
+		
+		<h5 style="color: green; font-weight: bold; font-style: italic; text-align: center;">NOTE: Double click anywhere on the row to modify the record.</h5>
+		
+		<br />
+		<br />
+
+        <table id="dtRecords" class="table responsive display">
+            <thead>
+                <tr>
+                    <th>Id</th>
+					<th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+					<th>Id</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div id="addRecordModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form role="form" id="AddRecordForm">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Create Record</h4>
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Name</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Name" name="Name" value="" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Position</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Position" name="Position" value="" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Office</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Office" name="Office" value="" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Age</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Age" name="Age" value="" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Start date</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Start_Date" name="Start_Date" value="" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Salary</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Salary" name="Salary" value="" class="form-control" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <br />
+					
+
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button type="button" id="btnSaveRecord" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+	
+	
+	<div id="editRecordModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form role="form" id="EditRecordForm">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit Record</h4>
+                    </div>
+
+
+                    <div class="modal-body">
+					
+						<div class="form-group" style="display: none;">
+                            <label class="control-label col-md-2">Id</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Id" name="Edit_Id" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Name</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Name" name="Edit_Name" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Position</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Position" name="Edit_Position" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Office</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Office" name="Edit_Office" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Age</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Age" name="Edit_Age" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Start date</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Start_Date" name="Edit_Start_Date" class="form-control" />
+                            </div>
+                        </div>
+						
+						<br />
+						<br />
+						
+						<div class="form-group">
+                            <label class="control-label col-md-2">Salary</label>
+                            <div class="col-md-10">
+                                <input type="text" id="Edit_Salary" name="Edit_Salary" class="form-control" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <br />
+					
+
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button type="button" id="btnEditRecord" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+	
+		$(document).ajaxStart(function(){
+			$("#divLoading").show();
+		});
+		
+		$(document).ajaxComplete(function(){
+			$("#divLoading").hide();
+		});
+		
+		$('#divTable').show();
+	
+		$('#dtRecords thead tr').clone(true).appendTo('#dtRecords thead');
+        $('#dtRecords thead tr:eq(1) th').each(function (i) {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+
+            $('input', this).on('keyup change', function () {
+                if (table.column(i).search() !== this.value) {
+                    table
+                        .column(i)
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+		
+
+        var table = $('#dtRecords').DataTable({
+			dom: 'lBfrtip',
+            orderCellsTop: true,
+            fixedHeader: true,
+			paginate: true,
+			iDisplayLength: 100,
+			buttons: [
+				'selectAll',
+				'selectNone',
+				'selectRows',
+				'copyHtml5',
+				'excelHtml5',
+				'csvHtml5',
+				'pdfHtml5'
+			],
+			select: true,
+			ajax: {
+				"url": 'https://us-central1-gce-core.cloudfunctions.net/retrieve_record',
+				"type": 'GET',
+				"async": false,
+				"dataSrc": ""
+			},
+			columns: [
+            { "name": 'Id', "title": 'Id', "data": "Id", "visible": false, "searchable": false },
+            { "name": 'Name', "title": 'Name', "data": "Name" },
+            { "name": 'Position', "title": 'Position', "data": "Position" },
+			{ "name": 'Office', "title": 'Office', "data": "Office" },
+			{ "name": 'Age', "title": 'Age', "data": "Age" },
+			{ "name": 'Start_Date', "title": 'Start_Date', "data": "Start_Date" },
+			{ "name": 'Salary',"title": 'Salary', "data": "Salary" }
+			]
+        });
+		
+		
+		$('#dtRecords').on( 'dblclick', 'tbody td:not(:first-child)', function (e) {
+			var data = table.row( this ).data();
+			editRecord(data);
+		} );
+    });
+	
+	
+	$('#btnSaveRecord').on('click', function () {
+	
+        var name = $('#Name').val();
+        var position = $('#Position').val();
+		var office = $('#Office').val();
+		var age = $('#Age').val();
+		var start_date = $('#Start_Date').val();
+		var salary = $('#Salary').val();
+		
+        $.ajax({
+            url: 'https://us-central1-gce-core.cloudfunctions.net/insert_record',
+			type: 'POST',
+            data: {
+                "Name": name,
+                "Position": position,
+				"Office" : office,
+				"Age": age,
+				"Start_Date": start_date,
+				"Salary": salary
+            },
+            success: function (response) {
+				location.reload();
+				showSuccessMessage();
+            },
+            error: function (error) {
+                alert('ERROR: ' + JSON.stringify(error));
+            }
+        });
+		
+    });
+	
+	
+	function editRecord(data) {
+
+		$('#Edit_Id').val(data.Id);
+		$('#Edit_Name').val(data.Name);
+		$('#Edit_Position').val(data.Position);
+		$('#Edit_Office').val(data.Office);
+		$('#Edit_Age').val(data.Age);
+		$('#Edit_Start_Date').val(data.Start_Date);
+		$('#Edit_Salary').val(data.Salary);
+		
+		$('#editRecordModal').modal('show');
+	}
+	
+	
+	$('#btnEditRecord').on('click', function () {
+	
+		var id = $('#Edit_Id').val();
+        var name = $('#Edit_Name').val();
+        var position = $('#Edit_Position').val();
+		var office = $('#Edit_Office').val();
+		var age = $('#Edit_Age').val();
+		var start_date = $('#Edit_Start_Date').val();
+		var salary = $('#Edit_Salary').val();
+
+        $.ajax({
+            url: 'https://us-central1-gce-core.cloudfunctions.net/edit_record',
+			type: 'POST',
+            data: {
+				"Id": id,
+                "Name": name,
+                "Position": position,
+				"Office" : office,
+				"Age": age,
+				"Start_Date": start_date,
+				"Salary": salary
+            },
+            success: function (response) {
+				location.reload();
+				showSuccessMessage();
+            },
+            error: function (error) {
+                alert('ERROR: ' + JSON.stringify(error));
+            }
+        });
+		
+    });
+	
+	
+	$('#btnDeleteRecord').on('click', function() {
+		var count = $('#dtRecords').DataTable().rows( { selected: true } ).count();
+		var proceedDelete = confirm("Are you sure you want to delete " + count + " record(s)?");
+		
+		if (proceedDelete == true) {
+			deleteRecord();
+		} else {
+			alert('No records were deleted.');
+		}
+	});
+
+	
+	function deleteRecord() {
+		
+		var table = $('#dtRecords').DataTable();
+		$('#deleteMessage').show();
+		var idArray = table.rows( { selected: true } ).data().pluck(0).toArray();
+		
+		$.ajax({
+            url: 'https://us-central1-gce-core.cloudfunctions.net/delete_record',
+			type: 'DELETE',
+            data: {
+                "id_array": JSON.stringify(idArray)
+            },
+            success: function (response) {
+				location.reload();
+				showSuccessMessage();
+            },
+            error: function (error) {
+                alert('ERROR: ' + JSON.stringify(error));
+            }
+        });
+		
+		$('#deleteMessage').hide();
+		
+	}
+	
+	
+	function showSuccessMessage() {
+		$('#divSuccessMessage').show();
+		$('#divSuccessMessage').fadeIn('slow', function(){
+			$('#divSuccessMessage').delay(5000).fadeOut(); 
+		});
+	}
+	
+	
+    function getFormData($form) {
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+</script>
+
+</body>
+</html>
